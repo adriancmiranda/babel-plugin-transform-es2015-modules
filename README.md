@@ -82,7 +82,7 @@ $ npm install --save-dev babel-plugin-transform-es2015-modules-cjs
 
 ```json
 {
-  "plugins": ["transform-es2015-modules-simple-commonjs"]
+  "plugins": ["transform-es2015-modules-cjs"]
 }
 ```
 
@@ -90,7 +90,7 @@ $ npm install --save-dev babel-plugin-transform-es2015-modules-cjs
 
 ```js
 require('babel').transform('code', {
-  plugins: ['transform-es2015-modules-simple-commonjs']
+  plugins: ['transform-es2015-modules-cjs']
 });
 ```
 
