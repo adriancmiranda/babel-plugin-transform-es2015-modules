@@ -1,4 +1,4 @@
-# babel-plugin-transform-es2015-modules-simple-commonjs [![npm version](https://badge.fury.io/js/babel-plugin-transform-es2015-modules-simple-commonjs.svg)](https://badge.fury.io/js/babel-plugin-transform-es2015-modules-simple-commonjs)
+# babel-plugin-transform-es2015-modules-cjs [![npm version](https://badge.fury.io/js/babel-plugin-transform-es2015-modules-cjs.svg)](https://badge.fury.io/js/babel-plugin-transform-es2015-modules-cjs)
 
 Simple transformer for ECMAScript 2015 modules (CommonJS).
 
@@ -71,7 +71,7 @@ You may want to use a linter (such as eslint with eslint-plugin-import) in order
 ## Installation
 
 ```sh
-$ npm install --save-dev babel-plugin-transform-es2015-modules-simple-commonjs
+$ npm install --save-dev babel-plugin-transform-es2015-modules-cjs
 ```
 
 ## Usage

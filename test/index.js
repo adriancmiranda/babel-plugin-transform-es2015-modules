@@ -1,6 +1,6 @@
 var assert = require('assert');
 var babel = require('babel-core');
-var chalk = require('chalk');
+var colors = require('colors');
 var clear = require('clear');
 var diff = require('diff');
 var fs = require('fs');
@@ -38,18 +38,18 @@ function runTest(dir) {
 	var normalizedExpected = normalizeLines(expected);
 
 	if (normalizedOutput === normalizedExpected) {
-		process.stdout.write(chalk.bgWhite.black(dir.name) + ' ' + chalk.green('OK'));
+		process.stdout.write(colors.bgWhite.black(dir.name) + ' ' + colors.green('OK'));
 	} else {
-		process.stdout.write(chalk.bgWhite.black(dir.name) + ' ' + chalk.red('Different'));
+		process.stdout.write(colors.bgWhite.black(dir.name) + ' ' + colors.red('Different'));
 		process.stdout.write('\n\n');
 
 		diff.diffLines(normalizedOutput, normalizedExpected)
 		.forEach(function (part) {
 			var value = part.value.replace(/\t/g, '»   ').replace(/^\n$/, '↵\n');
 			if (part.added) {
-				value = chalk.green(value);
+				value = colors.green(value);
 			} else if (part.removed) {
-				value = chalk.red(value);
+				value = colors.red(value);
 			}
 
 
@@ -69,7 +69,7 @@ if (process.argv.indexOf('--watch') >= 0) {
 		try {
 			runTests();
 		} catch (e) {
-			console.error(chalk.magenta(e.stack));
+			console.error(colors.magenta(e.stack));
 		}
 	});
 } else {

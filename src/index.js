@@ -1,5 +1,5 @@
-import 'better-log/install';
-import template from "babel-template";
+require('better-log/install');
+const template = require('babel-template');
 
 let buildRequire = template(`
  	require($0);
@@ -58,11 +58,11 @@ module.exports = function({
 
 						return importedID;
 					}
-					
-					function changeSourcePath(source) {
-						source.extra.rawValue = source.extra.rawValue.replace('.next.js', '.js');
-						source.extra.raw = source.extra.raw.replace('.next.js', '.js');
-						source.value = source.value.replace('.next.js', '.js');
+
+					function changeSourcePath(source, substr, newSubStr) {
+						source.extra.rawValue = source.extra.rawValue.replace(substr, newSubStr);
+						source.extra.raw = source.extra.raw.replace(substr, newSubStr);
+						source.value = source.value.replace(substr, newSubStr);
 					}
 
 					for (let path of body) {
@@ -86,7 +86,7 @@ module.exports = function({
 						}
 
 						if (path.isImportDeclaration()) {
-							changeSourcePath(path.node.source);
+							changeSourcePath(path.node.source, /\.next\(.js)^/g, '$1');
 							let specifiers = path.node.specifiers;
 							let is2015Compatible = path.node.source.value.match(/babel-runtime[\\\/]/);
 							if (specifiers.length == 0) {
