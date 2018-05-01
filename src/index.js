@@ -58,6 +58,12 @@ module.exports = function({
 
 						return importedID;
 					}
+					
+					function changeSourcePath(source) {
+						source.extra.rawValue = source.extra.rawValue.replace('.next.js', '.js');
+						source.extra.raw = source.extra.raw.replace('.next.js', '.js');
+						source.value = source.value.replace('.next.js', '.js');
+					}
 
 					for (let path of body) {
 						if (path.isExportDefaultDeclaration()) {
@@ -80,6 +86,7 @@ module.exports = function({
 						}
 
 						if (path.isImportDeclaration()) {
+							changeSourcePath(path.node.source);
 							let specifiers = path.node.specifiers;
 							let is2015Compatible = path.node.source.value.match(/babel-runtime[\\\/]/);
 							if (specifiers.length == 0) {
