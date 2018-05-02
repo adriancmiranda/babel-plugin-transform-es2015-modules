@@ -261,7 +261,7 @@ module.exports = function (_ref) {
 					}
 
 					if (hasNamedExports && hasDefaultExport) {
-						throw lastExportPath.buildCodeFrameError('The simple-commonjs plugin does not support both a export default and a export named in the same file. This is because the module.exports would override any export');
+						throw lastExportPath.buildCodeFrameError('The "babel-plugin-transform-es2015-modules-cjs" plugin does not support both a export default and a export named in the same file. This is because the module.exports would override any export');
 					}
 
 					path.unshiftContainer("body", sources.concat(anonymousSources));
