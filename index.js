@@ -87,10 +87,10 @@ module.exports = function({ types: t }) {
 							let match = file.opts.match;
 							let replaceBy = file.opts.replaceBy;
 							if ((typeof match === 'string' || match instanceof String || match instanceof RegExp) === false) {
-								match = /\.next(\.js)/g;
+								match = '';
 							}
 							if ((typeof replaceBy === 'string' || replaceBy instanceof String || typeof replaceBy === 'function') === false) {
-								replaceBy = '$1';
+								replaceBy = '';
 							}
 							if (file.opts.changeSources) {
 								changeSourcePath(path.node.source, match, replaceBy);
