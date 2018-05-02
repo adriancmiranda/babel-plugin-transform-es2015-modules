@@ -27,11 +27,11 @@ let buildExportAll = template(`
 
 module.exports = function({ types: t }) {
 	return {
-		inherits: require("babel-plugin-transform-strict-mode"),
+		inherits: require('babel-plugin-transform-strict-mode'),
 		visitor: {
 			Program: {
 				exit(path, file) {
-					let sources = [],
+					const sources = [],
 						anonymousSources = [],
 						{ scope } = path,
 						hasDefaultExport = false,
@@ -39,16 +39,16 @@ module.exports = function({ types: t }) {
 						lastExportPath = null;
 
 					// rename these commonjs variables if they're declared in the file
-					scope.rename("module");
-					scope.rename("exports");
-					scope.rename("require");
+					scope.rename('module');
+					scope.rename('exports');
+					scope.rename('require');
 
-					let body = path.get("body");
+					const body = path.get('body');
 
 					function addSource(path) {
-						let importedID = path.scope.generateUidIdentifier(path.node.source.value);
+						const importedID = path.scope.generateUidIdentifier(path.node.source.value);
 
-						sources.push(t.variableDeclaration("var", [
+						sources.push(t.variableDeclaration('var', [
 							t.variableDeclarator(importedID, buildRequire(
 								path.node.source
 							).expression)
@@ -63,11 +63,11 @@ module.exports = function({ types: t }) {
 						source.value = source.value.replace(substr, newSubStr);
 					}
 
-					for (let path of body) {
+					for (const path of body) {
 						if (path.isExportDefaultDeclaration()) {
 							hasDefaultExport = true;
 							lastExportPath = path;
-							let declaration = path.get("declaration");
+							const declaration = path.get('declaration');
 							if(declaration.type == 'FunctionDeclaration') {
 								if(declaration.node.id) {
 									path.replaceWithMultiple ([
@@ -84,28 +84,38 @@ module.exports = function({ types: t }) {
 						}
 
 						if (path.isImportDeclaration()) {
-							changeSourcePath(path.node.source, /\.next(\.js)/g, '$1');
-							let specifiers = path.node.specifiers;
-							let is2015Compatible = path.node.source.value.match(/babel-runtime[\\\/]/);
+							let match = file.opts.match;
+							let replaceBy = file.opts.replaceBy;
+							if ((typeof match === 'string' || match instanceof String || match instanceof RegExp) === false) {
+								match = /\.next(\.js)/g;
+							}
+							if ((typeof replaceBy === 'string' || replaceBy instanceof String || typeof replaceBy === 'function') === false) {
+								replaceBy = '$1';
+							}
+							if (file.opts.changeSources) {
+								changeSourcePath(path.node.source, match, replaceBy);
+							}
+							const specifiers = path.node.specifiers;
+							const is2015Compatible = path.node.source.value.match(/babel-runtime[\\\/]/);
 							if (specifiers.length == 0) {
 								anonymousSources.push(buildRequire(path.node.source));
 							} else if (specifiers.length == 1 && specifiers[0].type == 'ImportDefaultSpecifier') {
-								let template = is2015Compatible ? buildRequireDefault : buildRequire;
-								sources.push(t.variableDeclaration("var", [
-									t.variableDeclarator(t.identifier(specifiers[0].local.name), template (
+								const template = is2015Compatible ? buildRequireDefault : buildRequire;
+								sources.push(t.variableDeclaration('var', [
+									t.variableDeclarator(t.identifier(specifiers[0].local.name), template(
 										path.node.source
 									).expression)
 								]));
 							} else {
-								let importedID = addSource(path);
+								const importedID = addSource(path);
 
 								specifiers.forEach(({imported, local}) => {
 									if (!imported || (!is2015Compatible && imported.name === 'default')) {
-										sources.push(t.variableDeclaration("var", [
+										sources.push(t.variableDeclaration('var', [
 											t.variableDeclarator(t.identifier(local.name), t.identifier(importedID.name))
 										]));
 									} else {
-										sources.push(t.variableDeclaration("var", [
+										sources.push(t.variableDeclaration('var', [
 											t.variableDeclarator(t.identifier(local.name), t.identifier(importedID.name + '.' + imported.name))
 										]));
 									}
@@ -118,31 +128,30 @@ module.exports = function({ types: t }) {
 
 						if (path.isExportNamedDeclaration()) {
 							lastExportPath = path;
-							let declaration = path.get("declaration");
+							const declaration = path.get('declaration');
 
 							// if we are exporting a class/function/variable
 							if (declaration.node) {
 								hasNamedExports = true;
 								if (declaration.isFunctionDeclaration()) {
-									let id = declaration.node.id;
+									const id = declaration.node.id;
 									path.replaceWithMultiple([
 										declaration.node,
 										buildNamedExportsAssignment(id, id)
 									]);
 								} else if (declaration.isClassDeclaration()) {
-									let id = declaration.node.id;
+									const id = declaration.node.id;
 									path.replaceWithMultiple([
 										declaration.node,
 										buildNamedExportsAssignment(id, id)
 									]);
 								} else if (declaration.isVariableDeclaration()) {
-									let declarators = declaration.get("declarations");
-									for (let decl of declarators) {
-										let id = decl.get("id");
-
-										let init = decl.get("init");
+									const declarators = declaration.get('declarations');
+									for (const decl of declarators) {
+										const id = decl.get('id');
+										const init = decl.get('init');
 										if (!init.node) {
-											init.replaceWith(t.identifier("undefined"));
+											init.replaceWith(t.identifier('undefined'));
 										}
 
 										if (id.isIdentifier()) {
@@ -155,7 +164,7 @@ module.exports = function({ types: t }) {
 							}
 
 							// if we are exporting already instantiated variables
-							let specifiers = path.get("specifiers");
+							let specifiers = path.get('specifiers');
 							if (specifiers.length) {
 								let nodes = [];
 								let source = path.node.source;
@@ -198,7 +207,7 @@ module.exports = function({ types: t }) {
 						if (path.isExportAllDeclaration()) {
 						   // export * from 'a';
 						   let importedID = addSource(path);
-						   let keyName = path.scope.generateUidIdentifier(importedID.name + "_key")
+						   let keyName = path.scope.generateUidIdentifier(`${importedID.name}_key`)
 
 						   path.replaceWithMultiple(buildExportAll(importedID, keyName));
 					   }
@@ -208,7 +217,7 @@ module.exports = function({ types: t }) {
 						throw lastExportPath.buildCodeFrameError('The simple-commonjs plugin does not support both a export default and a export named in the same file. This is because the module.exports would override any export');
 					}
 
-					path.unshiftContainer("body", sources.concat(anonymousSources));
+					path.unshiftContainer('body', sources.concat(anonymousSources));
 				}
 			}
 		}
