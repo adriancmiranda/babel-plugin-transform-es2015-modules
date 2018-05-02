@@ -1,8 +1,8 @@
 {
-  "name": "babel-plugin-transform-es2015-modules-cjs",
+  "name": "babel-plugin-transform-es2015-modules",
   "version": "1.0.0",
   "description": "Simplified imports and exports",
-  "repository": "adriancmiranda/babel-plugin-transform-es2015-modules-cjs",
+  "repository": "adriancmiranda/babel-plugin-transform-es2015-modules",
   "license": "MIT",
   "main": "dist/index.js",
   "dependencies": {
