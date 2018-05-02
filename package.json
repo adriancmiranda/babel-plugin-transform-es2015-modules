@@ -4,7 +4,7 @@
   "description": "Simplified imports and exports",
   "repository": "finom/babel-plugin-transform-es2015-modules-cjs",
   "license": "MIT",
-  "main": "dist/index.js",
+  "main": "index.js",
   "dependencies": {
     "babel-plugin-transform-strict-mode": "6.8.0",
     "babel-runtime": "6.3.19",
@@ -24,7 +24,7 @@
     "watch": "1.0.2"
   },
   "scripts": {
-    "release": "babel src --out-dir dist",
+    "release": "babel index.js --out-dir dist",
     "test": "node test",
     "watch": "node test --watch",
     "prepublish": "npm test && npm run release"
