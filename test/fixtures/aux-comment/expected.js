@@ -21,7 +21,7 @@ require("foo-bar");
 require("./directory/foo-bar");
 
 /* comment 1*/
-exports.test = test;
+// export {test};
 var test = exports.test = 5;
 
 bar(foo, bar2);
