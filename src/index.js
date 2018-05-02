@@ -31,6 +31,7 @@ module.exports = function({ types: t }) {
 		visitor: {
 			Program: {
 				exit(path, file) {
+					const opts = file.opts;
 					let sources = [],
 						anonymousSources = [],
 						{ scope } = path,
@@ -44,6 +45,18 @@ module.exports = function({ types: t }) {
 					scope.rename("require");
 
 					let body = path.get("body");
+
+					function isString(value) {
+						return typeof value === 'string' || value instanceof String;
+					}
+
+					function isRegExp(value) {
+						return value instanceof RegExp;
+					}
+
+					function isFunction(value) {
+						return typeof value === 'function';
+					}
 
 					function addSource(path) {
 						let importedID = path.scope.generateUidIdentifier(path.node.source.value);
@@ -61,6 +74,11 @@ module.exports = function({ types: t }) {
 						source.extra.rawValue = source.extra.rawValue.replace(substr, newSubStr);
 						source.extra.raw = source.extra.raw.replace(substr, newSubStr);
 						source.value = source.value.replace(substr, newSubStr);
+					}
+
+					function escapeRegExp(value) {
+						value = isString(value) ? value : '';
+						return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 					}
 
 					for (let path of body) {
@@ -84,15 +102,10 @@ module.exports = function({ types: t }) {
 						}
 
 						if (path.isImportDeclaration()) {
-							let match = file.opts.match;
-							let replaceBy = file.opts.replaceBy;
-							if ((typeof match === 'string' || match instanceof String || match instanceof RegExp) === false) {
-								match = '';
-							}
-							if ((typeof replaceBy === 'string' || replaceBy instanceof String || typeof replaceBy === 'function') === false) {
-								replaceBy = '';
-							}
-							if (file.opts.changeSources) {
+							const flags = opts.flags;
+							const match = isString(opts.match) ? new RegExp(escapeRegExp(opts.match), flags) : (isRegExp(opts.match) ? opts.match : '');
+							const replaceBy = isString(opts.replaceBy) || isFunction(opts.replaceBy) ? opts.replaceBy : '';
+							if (opts.changeSources) {
 								changeSourcePath(path.node.source, match, replaceBy);
 							}
 							let specifiers = path.node.specifiers;

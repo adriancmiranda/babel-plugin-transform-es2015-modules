@@ -27,6 +27,7 @@ module.exports = function (_ref) {
 		visitor: {
 			Program: {
 				exit: function exit(path, file) {
+					var opts = file.opts;
 					var sources = [],
 					    anonymousSources = [],
 					    scope = path.scope,
@@ -41,6 +42,18 @@ module.exports = function (_ref) {
 
 					var body = path.get("body");
 
+					function isString(value) {
+						return typeof value === 'string' || value instanceof String;
+					}
+
+					function isRegExp(value) {
+						return value instanceof RegExp;
+					}
+
+					function isFunction(value) {
+						return typeof value === 'function';
+					}
+
 					function addSource(path) {
 						var importedID = path.scope.generateUidIdentifier(path.node.source.value);
 
@@ -53,6 +66,11 @@ module.exports = function (_ref) {
 						source.extra.rawValue = source.extra.rawValue.replace(substr, newSubStr);
 						source.extra.raw = source.extra.raw.replace(substr, newSubStr);
 						source.value = source.value.replace(substr, newSubStr);
+					}
+
+					function escapeRegExp(value) {
+						value = isString(value) ? value : '';
+						return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 					}
 
 					var _iteratorNormalCompletion = true;
@@ -81,15 +99,10 @@ module.exports = function (_ref) {
 
 							if (_path.isImportDeclaration()) {
 								var _ret = function () {
-									var match = file.opts.match;
-									var replaceBy = file.opts.replaceBy;
-									if ((typeof match === 'string' || match instanceof String || match instanceof RegExp) === false) {
-										match = '';
-									}
-									if ((typeof replaceBy === 'string' || replaceBy instanceof String || typeof replaceBy === 'function') === false) {
-										replaceBy = '';
-									}
-									if (file.opts.changeSources) {
+									var flags = opts.flags;
+									var match = isString(opts.match) ? new RegExp(escapeRegExp(opts.match), flags) : isRegExp(opts.match) ? opts.match : '';
+									var replaceBy = isString(opts.replaceBy) || isFunction(opts.replaceBy) ? opts.replaceBy : '';
+									if (opts.changeSources) {
 										changeSourcePath(_path.node.source, match, replaceBy);
 									}
 									var specifiers = _path.node.specifiers;
