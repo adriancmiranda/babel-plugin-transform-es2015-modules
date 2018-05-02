@@ -81,7 +81,17 @@ module.exports = function (_ref) {
 
 							if (_path.isImportDeclaration()) {
 								var _ret = function () {
-									changeSourcePath(_path.node.source, /\.next(\.js)/g, '$1');
+									var match = file.opts.match;
+									var replaceBy = file.opts.replaceBy;
+									if ((typeof match === 'string' || match instanceof String || match instanceof RegExp) === false) {
+										match = /\.next(\.js)/g;
+									}
+									if ((typeof replaceBy === 'string' || replaceBy instanceof String || typeof replaceBy === 'function') === false) {
+										replaceBy = '$1';
+									}
+									if (file.opts.changeSources) {
+										changeSourcePath(_path.node.source, match, replaceBy);
+									}
 									var specifiers = _path.node.specifiers;
 									var is2015Compatible = _path.node.source.value.match(/babel-runtime[\\\/]/);
 									if (specifiers.length == 0) {
