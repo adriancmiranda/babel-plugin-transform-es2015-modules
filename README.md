@@ -1,5 +1,5 @@
 # babel-plugin-transform-es2015-modules-cjs [![npm version](https://badge.fury.io/js/babel-plugin-transform-es2015-modules-cjs.svg)](https://badge.fury.io/js/babel-plugin-transform-es2015-modules-cjs)
-> This plugin is a fork from **babel-plugin-transform-es2015-modules-commonjs** with extra options to modify the compiled require paths.
+> This plugin is a fork from **babel-plugin-transform-es2015-modules-simple-commonjs** with extra options to modify the compiled require paths.
 
 Simple transformer for ECMAScript 2015 modules (CommonJS).
 
