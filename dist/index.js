@@ -81,7 +81,7 @@ module.exports = function (_ref) {
 
 							if (_path.isImportDeclaration()) {
 								var _ret = function () {
-									changeSourcePath(_path.node.source, /\.next\(.js)^/g, '$1');
+									changeSourcePath(_path.node.source, /\.next(\.js)$/g, '$1');
 									var specifiers = _path.node.specifiers;
 									var is2015Compatible = _path.node.source.value.match(/babel-runtime[\\\/]/);
 									if (specifiers.length == 0) {
