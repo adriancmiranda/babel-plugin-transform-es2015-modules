@@ -18,7 +18,7 @@ doSomething();
 module.exports = x + y;
 ```
 
-Instead of this one (generated with ``babel-plugin-transform-es2015-modules-commonjs``):
+Instead of this one (generated with ``babel-plugin-transform-es2015-modules-cjs``):
 ```js
 Object.defineProperty(exports, "__esModule", {
   value: true

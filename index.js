@@ -25,9 +25,7 @@ let buildExportAll = template(`
 	}
 `);
 
-module.exports = function({
-	types: t
-}) {
+module.exports = function({ types: t }) {
 	return {
 		inherits: require("babel-plugin-transform-strict-mode"),
 		visitor: {
